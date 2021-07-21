@@ -10,7 +10,6 @@ document.getElementsByClassName("temperature")[0].onclick = function(){
     const fahrenheit = "F";
     var tempDegree = document.getElementById("tempDegree").innerText;
     var tempDegreeH1 = document.getElementById("tempDegree");
-    console.log(tempDegree);
     if(tempDegree == "C"){
         tempDegreeH1.innerHTML = "";
         tempDegreeH1.append(fahrenheit);
@@ -22,6 +21,7 @@ document.getElementsByClassName("temperature")[0].onclick = function(){
         tempDegreeH1.innerHTML = "";
         tempDegreeH1.append(celsius);
         currentTemp = (temperatureH1.innerText - 32) * 5 / 9;
+        currentTemp = Math.round(currentTemp);
         temperatureH1.innerHTML = "";
         temperatureH1.append(currentTemp);
     }
@@ -30,8 +30,8 @@ document.getElementsByClassName("temperature")[0].onclick = function(){
 
 if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(positon => {
-        long = 51.15086;
-        lat = 0.86766;
+        long = positon.coords.latitude;
+        lat = positon.coords.longitude;
 
         const geocodingAPI = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + long + ',' +  lat + '&key=' + config.GEOCODING_API_KEY;
 
@@ -77,6 +77,10 @@ if(navigator.geolocation){
                     }
                 }
 
+                if(x == 6002){
+                    alert("Sorry the temperature for this location cannot be found")
+                }
+
                 locationID = metofficeData.Locations.Location[x].id;
                 
                 const filteredMetofficeAPI = ('http://datapoint.metoffice.gov.uk/public/data/val/wxfcs/all/json/' + locationID + '?res=3hourly&key=' + config.METOFFICE_API_KEY)
@@ -87,6 +91,10 @@ if(navigator.geolocation){
                 .then(weatherData => {
                     return weatherData;
                 })
+                .catch(error => {
+                    console.error(error);
+                });
+
 
                 var hourlyForecastLength = weatherData.SiteRep.DV.Location.Period[0].Rep.length;
                 console.log(hourlyForecastLength);
