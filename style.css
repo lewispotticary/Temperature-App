@@ -16,6 +16,7 @@ body {
 
 .location {
   height: 30vh;
+  font-size: 25px;
 }
 
 .temperature {
